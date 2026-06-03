@@ -1,0 +1,100 @@
+<%- include('partials/header', { user: user }) %>
+
+  <!-- HERO -->
+  <section class="bg-dark text-white py-5">
+    <div class="container text-center py-3">
+      <h1 class="display-5 fw-bold">Welcome to County Reports</h1>
+      <p class="lead text-white-50 mb-4">Help us improve our community. Report local problems and track their progress.</p>
+      <% if (typeof user !== 'undefined' && user) { %>
+        <a href="/dashboard" class="btn btn-primary btn-lg me-2">Make Report</a>
+      <% } else { %>
+        <a href="/register" class="btn btn-primary btn-lg me-2">Get Started</a>
+        <a href="/login" class="btn btn-outline-light btn-lg">Login</a>
+      <% } %>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <section class="bg-primary text-white py-3">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-4">
+          <h4 class="fw-bold mb-0"><%= reports.length %></h4>
+          <small>Total Reports</small>
+        </div>
+        <div class="col-4">
+          <h4 class="fw-bold mb-0"><%= reports.filter(r => r.status === 'open').length %></h4>
+          <small>Open</small>
+        </div>
+        <div class="col-4">
+          <h4 class="fw-bold mb-0"><%= reports.filter(r => r.status === 'solved').length %></h4>
+          <small>Solved</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LATEST REPORTS -->
+  <div class="container mt-5 mb-5">
+    <h4 class="mb-4">🗺️ Latest Community Reports</h4>
+
+    <% if (reports.length === 0) { %>
+      <div class="text-center py-5 text-muted">
+        <h5>No reports yet.</h5>
+        <p>Be the first to report a problem in your community!</p>
+        <a href="/register" class="btn btn-primary">Register & Report</a>
+      </div>
+    <% } else { %>
+      <div class="row">
+        <% reports.forEach(report => { %>
+          <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+
+              <!-- IMAGE -->
+              <% if (report.image) { %>
+                <div class="position-relative">
+                  <img src="/uploads/<%= report.image %>"
+                       class="card-img-top"
+                       style="height: 200px; object-fit: cover;">
+                  <span class="position-absolute bottom-0 start-0 bg-dark bg-opacity-50 text-white px-3 py-1 fw-bold w-100">
+                    <%= report.title %>
+                  </span>
+                </div>
+              <% } else { %>
+                <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 100px;">
+                  <span class="text-white fs-5 fw-bold"><%= report.title %></span>
+                </div>
+              <% } %>
+
+              <!-- CARD BODY -->
+              <div class="card-body">
+                <div class="d-flex gap-2 mb-2">
+                  <span class="badge bg-secondary"><%= report.category %></span>
+                  <% if (report.status === 'solved') { %>
+                    <span class="badge bg-success">✅ Solved</span>
+                  <% } else { %>
+                    <span class="badge bg-warning text-dark">⚠️ Open</span>
+                  <% } %>
+                  <% if (report.danger_level === 'high') { %>
+                    <span class="badge bg-danger">🔴 High</span>
+                  <% } else if (report.danger_level === 'medium') { %>
+                    <span class="badge bg-orange" style="background-color: #fd7e14;">🟠 Medium</span>
+                  <% } else { %>
+                    <span class="badge bg-success">🟢 Low</span>
+                  <% } %>
+                </div>
+                <p class="card-text"><%= report.description %></p>
+                <small class="text-muted">
+                  👤 <%= report.email %> &nbsp;|&nbsp;
+                  📅 <%= new Date(report.created_at).toLocaleDateString() %>
+                </small>
+              </div>
+
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+
+<%- include('partials/footer') %>

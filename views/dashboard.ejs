@@ -1,0 +1,112 @@
+<%- include('partials/header', { user: user }) %>
+
+  <div class="container mt-4">
+
+    <!-- SUBMIT FORM -->
+    <div class="card mb-5 shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">📋 Submit a New Report</h5>
+      </div>
+      <div class="card-body">
+        <form action="/report" method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input type="text" name="title" class="form-control"
+              placeholder="e.g. Tree fell on Main Street" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Category</label>
+            <select name="category" class="form-select">
+              <option value="road">Road Problem</option>
+              <option value="drainage">Drainage / Water</option>
+              <option value="electricity">Electricity</option>
+              <option value="parks">Parks & Trees</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3"
+              placeholder="Describe the problem in detail..." required></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Upload Image <span class="text-muted">(optional)</span></label>
+            <input type="file" name="image" class="form-control" accept="image/*">
+          </div>
+          <button type="submit" class="btn btn-primary">Submit Report</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ALL REPORTS -->
+    <h4 class="mb-3">🗺️ Community Reports</h4>
+    <% if (reports.length === 0) { %>
+      <p class="text-muted">No reports yet. Be the first to submit one!</p>
+    <% } else { %>
+      <div class="row">
+        <% reports.forEach(report => { %>
+          <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+
+              <!-- IMAGE ON TOP -->
+              <% if (report.image) { %>
+                <div class="position-relative">
+                  <img src="/uploads/<%= report.image %>"
+                       class="card-img-top"
+                       style="height: 200px; object-fit: cover;">
+                  <span class="position-absolute bottom-0 start-0 bg-dark bg-opacity-50 text-white px-3 py-1 fw-bold w-100">
+                    <%= report.title %>
+                  </span>
+                </div>
+              <% } else { %>
+                <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 100px;">
+                  <span class="text-white fs-5 fw-bold"><%= report.title %></span>
+                </div>
+              <% } %>
+
+              <!-- CARD BODY -->
+              <div class="card-body">
+                <div class="d-flex gap-2 mb-2">
+                  <span class="badge bg-secondary"><%= report.category %></span>
+                  <% if (report.status === 'solved') { %>
+                    <span class="badge bg-success">✅ Solved</span>
+                  <% } else { %>
+                    <span class="badge bg-warning text-dark">⚠️ Open</span>
+                  <% } %>
+                  <% if (report.danger_level === 'high') { %>
+                    <span class="badge bg-danger">🔴 High</span>
+                  <% } else if (report.danger_level === 'medium') { %>
+                    <span class="badge bg-orange" style="background-color: #fd7e14;">🟠 Medium</span>
+                  <% } else { %>
+                    <span class="badge bg-success">🟢 Low</span>
+                  <% } %>
+                </div>
+                <p class="card-text"><%= report.description %></p>
+                <small class="text-muted">
+                  👤 <%= report.email %> &nbsp;|&nbsp;
+                  📅 <%= new Date(report.created_at).toLocaleDateString() %>
+                </small>
+              </div>
+
+              <!-- ADMIN BUTTONS -->
+              <% if (user.role === 'admin') { %>
+                <div class="card-footer d-flex gap-2">
+                  <% if (report.status !== 'solved') { %>
+                    <form action="/report/solve/<%= report.id %>" method="POST">
+                      <button class="btn btn-success btn-sm">✅ Mark as Solved</button>
+                    </form>
+                  <% } %>
+                  <form action="/report/delete/<%= report.id %>" method="POST">
+                    <button class="btn btn-danger btn-sm">🗑️ Delete</button>
+                  </form>
+                </div>
+              <% } %>
+
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+
+  </div>
+<%- include('partials/footer') %>

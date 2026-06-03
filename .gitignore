@@ -1,0 +1,25 @@
+# 1. Μυστικά κλειδιά και κωδικοί (ΠΟΤΕ στο GitHub!)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 2. Φάκελοι εξαρτήσεων (Είναι τεράστιοι, δεν χρειάζεται να ανέβουν)
+node_modules/
+jspm_packages/
+
+# 3. Αρχεία καταγραφής (Logs)
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 4. Αρχεία του λειτουργικού συστήματος (Mac/Windows σαβούρα)
+.DS_Store
+Thumbs.db
+
+# 5. Φάκελοι build/παραγωγής (αν χρησιμοποιήσεις React/Vite αργότερα)
+dist/
+build/
+.next/
