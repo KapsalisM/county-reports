@@ -33,6 +33,16 @@
             <label class="form-label">Upload Image <span class="text-muted">(optional)</span></label>
             <input type="file" name="image" class="form-control" accept="image/*">
           </div>
+          <div class="mb-3">
+            <label class="form-label">Location</label>
+            <input type="text" id="address-input" name="address" class="form-control" 
+            placeholder="Start typing a street address...">
+            <input type="hidden" name="latitude" id="latitude">
+            <input type="hidden" name="longitude" id="longitude">
+          </div>
+          <div class="mb-3">
+            <div id="report-map" style="height: 300px; border-radius: 12px;"></div>
+          </div>
           <button type="submit" class="btn btn-primary">Submit Report</button>
         </form>
       </div>
@@ -54,38 +64,53 @@
                   <img src="/uploads/<%= report.image %>"
                        class="card-img-top"
                        style="height: 200px; object-fit: cover;">
-                  <span class="position-absolute bottom-0 start-0 bg-dark bg-opacity-50 text-white px-3 py-1 fw-bold w-100">
-                    <%= report.title %>
-                  </span>
+                  <div class="position-absolute bottom-0 start-0 w-100 px-3 py-2"
+                       style="background: rgba(0,0,0,0.55);">
+                    <h6 class="text-white fw-bold mb-0"><%= report.title %></h6>
+                    <% if (report.address) { %>
+                      <small class="text-white-50">📍 <%= report.address %></small>
+                    <% } %>
+                  </div>
                 </div>
               <% } else { %>
-                <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 100px;">
-                  <span class="text-white fs-5 fw-bold"><%= report.title %></span>
+                <div class="d-flex flex-column justify-content-center px-3 py-3"
+                     style="background-color: #495057; border-radius: 12px 12px 0 0; min-height: 80px;">
+                  <h6 class="text-white fw-bold mb-0"><%= report.title %></h6>
+                  <% if (report.address) { %>
+                    <small class="text-white-50">📍 <%= report.address %></small>
+                  <% } %>
                 </div>
               <% } %>
 
               <!-- CARD BODY -->
               <div class="card-body">
-                <div class="d-flex gap-2 mb-2">
-                  <span class="badge bg-secondary"><%= report.category %></span>
+
+                <!-- BADGES -->
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                  <span class="badge bg-secondary">🗂️ <%= report.category %></span>
                   <% if (report.status === 'solved') { %>
                     <span class="badge bg-success">✅ Solved</span>
                   <% } else { %>
                     <span class="badge bg-warning text-dark">⚠️ Open</span>
                   <% } %>
                   <% if (report.danger_level === 'high') { %>
-                    <span class="badge bg-danger">🔴 High</span>
+                    <span class="badge bg-danger">🔴 High Danger</span>
                   <% } else if (report.danger_level === 'medium') { %>
-                    <span class="badge bg-orange" style="background-color: #fd7e14;">🟠 Medium</span>
+                    <span class="badge" style="background-color: #fd7e14; color: white;">🟠 Medium Danger</span>
                   <% } else { %>
-                    <span class="badge bg-success">🟢 Low</span>
+                    <span class="badge bg-success">🟢 Low Danger</span>
                   <% } %>
                 </div>
+
+                <!-- DESCRIPTION -->
                 <p class="card-text"><%= report.description %></p>
+
+                <!-- REPORTER INFO -->
                 <small class="text-muted">
                   👤 <%= report.email %> &nbsp;|&nbsp;
                   📅 <%= new Date(report.created_at).toLocaleDateString() %>
                 </small>
+
               </div>
 
               <!-- ADMIN BUTTONS -->
@@ -109,4 +134,52 @@
     <% } %>
 
   </div>
+
+  <!-- MAP SCRIPT -->
+  <script>
+    let map, marker;
+
+    function initMap() {
+      const defaultLocation = { lat: 37.9838, lng: 23.7275 };
+
+      map = new google.maps.Map(document.getElementById("report-map"), {
+        zoom: 13,
+        center: defaultLocation,
+      });
+
+      marker = new google.maps.Marker({
+        map: map,
+        draggable: true,
+      });
+
+      map.addListener("click", (e) => {
+        placeMarker(e.latLng);
+      });
+
+      marker.addListener("dragend", () => {
+        updateCoords(marker.getPosition());
+      });
+
+      const input = document.getElementById("address-input");
+      const autocomplete = new google.maps.places.Autocomplete(input);
+      autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace();
+        if (!place.geometry) return;
+        map.setCenter(place.geometry.location);
+        map.setZoom(16);
+        placeMarker(place.geometry.location);
+      });
+    }
+
+    function placeMarker(location) {
+      marker.setPosition(location);
+      updateCoords(location);
+    }
+
+    function updateCoords(location) {
+      document.getElementById("latitude").value = location.lat();
+      document.getElementById("longitude").value = location.lng();
+    }
+  </script>
+
 <%- include('partials/footer') %>

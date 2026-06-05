@@ -87,12 +87,6 @@ Respond with only one word (high, medium, or low):`,
 }
 
 
-
-
-
-
-// ─── PAGES ───────────────────────────────────────────────
-
 //app.get("/", (req, res) => res.render("home.ejs"));
 app.get("/", async (req, res) => {
   try {
@@ -152,16 +146,18 @@ app.get("/dashboard", async (req, res) => {
 
 app.post("/report",upload.single("image"), async (req, res) => {
   if (!req.isAuthenticated()) return res.redirect("/login");
-  const { title, description, category } = req.body;
+  const { title, description, category, address } = req.body;
+  const latitude = req.body.latitude !== "" ? parseFloat(req.body.latitude) : null;
+  const longitude = req.body.longitude !== "" ? parseFloat(req.body.longitude) : null;
   const image = req.file ? req.file.filename : null;//epistrefo null an den dwsw img
   //asking ollada 
   const danger_level = await getDangerLevel(title,description);
   console.log("Danger Level:",danger_level)
   try {
     await db.query(
-      "INSERT INTO reports (user_id, title, description, category, image, danger_level) VALUES ($1, $2, $3, $4, $5, $6)",
-      [req.user.id, title, description, category, image, danger_level]
-    );
+      "INSERT INTO reports (user_id, title, description, category, image, danger_level, address ,latitude ,longitude) VALUES ($1, $2, $3, $4, $5, $6, $7, $8 ,$9)",
+      [req.user.id, title, description, category, image, danger_level, address , latitude, longitude]
+    ); 
     res.redirect("/dashboard");
   } catch (err) {
     console.log(err);
@@ -348,6 +344,7 @@ passport.use("google", new GoogleStrategy({
   }
 }));
 
+app.locals.GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 passport.serializeUser((user, cb) => cb(null, user));
 passport.deserializeUser((user, cb) => cb(null, user));
 
