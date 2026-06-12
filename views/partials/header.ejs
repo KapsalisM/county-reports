@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>County Reports</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/styling.css">
   <script src="https://maps.googleapis.com/maps/api/js?key=<%= GOOGLE_MAPS_API_KEY %>&libraries=places&callback=initMap" async defer></script>
 </head>
-<body class="bg-light d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100">
 
   <nav class="navbar navbar-dark bg-dark px-4">
     <a class="navbar-brand fw-bold" href="/">🏛️ County Reports</a>
@@ -16,6 +17,9 @@
         <span class="text-white me-3"><%= user.email %></span>
         <% if (user.role === 'admin') { %>
           <span class="badge bg-warning text-dark me-3">Admin</span>
+        <% } %>
+        <% if (user.role === 'admin') { %>
+          <a href="/admin" class="btn btn-warning btn-sm me-2">🛠️ Admin</a>
         <% } %>
         <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
       <% } else { %>

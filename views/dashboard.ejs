@@ -1,8 +1,6 @@
 <%- include('partials/header', { user: user }) %>
 
   <div class="container mt-4">
-
-    <!-- SUBMIT FORM -->
     <div class="card mb-5 shadow-sm">
       <div class="card-header bg-primary text-white">
         <h5 class="mb-0">📋 Submit a New Report</h5>
@@ -104,7 +102,21 @@
 
                 <!-- DESCRIPTION -->
                 <p class="card-text"><%= report.description %></p>
-
+      
+                <div class="d-flex align-items-center mt-2">
+                <form action="/report/vote/<%= report.id %>" method="POST">
+                <button class="btn btn-sm <%= votedIds.includes(report.id) ? 'btn-primary' : 'btn-outline-primary' %>">
+                  👍 <%= report.votes || 0 %>
+                </button>
+                </form>
+                  <small class="text-muted ms-2">
+                  <% if (votedIds.includes(report.id)) { %>
+                  You voted for this
+                  <% } else { %>
+                  Vote to prioritize
+                  <% } %>
+                </small>
+              </div>
                 <!-- REPORTER INFO -->
                 <small class="text-muted">
                   👤 <%= report.email %> &nbsp;|&nbsp;
@@ -135,8 +147,11 @@
 
   </div>
 
-  <!-- MAP SCRIPT -->
   <script>
+    window.addEventListener("load", function() {
+      initMap();
+    });
+
     let map, marker;
 
     function initMap() {

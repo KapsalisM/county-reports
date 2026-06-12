@@ -1,16 +1,180 @@
-
+/* ─── GENERAL ─────────────────────────────────────────── */
 body {
-  background-color: #E8ECEF;
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
-.centered {
-    padding-top: 200px;
-    text-align: center;
+main {
+  flex: 1;
 }
 
-.secret-text {
+/* ─── HERO ────────────────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  padding: 100px 20px;
   text-align: center;
-  font-size: 2rem;
-  color: #fff;
-  background-color: #000;
+  color: white;
+  width: 100%;
+}
+
+.hero h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ─── STATS BAR ───────────────────────────────────────── */
+.stats-bar {
+  background-color: #0d6efd;
+  color: white;
+  padding: 20px 0;
+  width: 100%;
+}
+
+.stats-bar h4 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.stats-bar small {
+  font-size: 0.9rem;
+  opacity: 0.85;
+  display: block;
+}
+
+/* ─── NAVBAR ──────────────────────────────────────────── */
+.navbar {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-brand {
+  font-size: 1.3rem;
+  letter-spacing: 0.5px;
+}
+
+/* ─── HERO ────────────────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  padding: 80px 20px;
+  text-align: center;
+  color: white;
+}
+
+.hero h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 2rem;
+}
+
+/* ─── STATS BAR ───────────────────────────────────────── */
+.stats-bar {
+  background-color: #0d6efd;
+  color: white;
+  padding: 16px 0;
+}
+
+.stats-bar h4 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.stats-bar small {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+/* ─── CARDS ───────────────────────────────────────────── */
+.card {
+  border: none;
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12) !important;
+}
+
+.card-img-top {
+  border-radius: 12px 12px 0 0;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-no-image {
+  height: 100px;
+  background-color: #6c757d;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.card-img-overlay-title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 8px 16px;
+  font-weight: 600;
+}
+
+.card-footer {
+  background: transparent;
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+
+/* ─── FORM CARD ───────────────────────────────────────── */
+.form-card .card-header {
+  border-radius: 12px 12px 0 0;
+}
+
+/* ─── BADGES ──────────────────────────────────────────── */
+.badge {
+  font-size: 0.75rem;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+/* ─── FOOTER ──────────────────────────────────────────── */
+footer {
+  background-color: #212529;
+  color: white;
+  padding: 24px 0;
+  text-align: center;
+  margin-top: auto;
+}
+
+footer p {
+  margin: 0 0 4px 0;
+  font-size: 0.95rem;
+}
+
+footer small {
+  color: rgba(255, 255, 255, 0.4);
 }

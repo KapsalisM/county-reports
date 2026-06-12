@@ -1,0 +1,173 @@
+<%- include('partials/header', { user: user }) %>
+
+<div class="container mt-4 mb-5">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold">🛠️ Admin Panel</h3>
+    <a href="/dashboard" class="btn btn-outline-secondary btn-sm">← Back to Dashboard</a>
+  </div>
+
+  <!-- STATS OVERVIEW -->
+  <div class="row g-3 mb-5">
+    <div class="col-6 col-md-3">
+      <div class="card text-center shadow-sm border-0 bg-primary text-white">
+        <div class="card-body">
+          <h2 class="fw-bold mb-0"><%= stats.totalUsers %></h2>
+          <small>Total Users</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center shadow-sm border-0 bg-dark text-white">
+        <div class="card-body">
+          <h2 class="fw-bold mb-0"><%= stats.totalReports %></h2>
+          <small>Total Reports</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center shadow-sm border-0 bg-warning">
+        <div class="card-body">
+          <h2 class="fw-bold mb-0"><%= stats.openReports %></h2>
+          <small>Open Reports</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center shadow-sm border-0 bg-success text-white">
+        <div class="card-body">
+          <h2 class="fw-bold mb-0"><%= stats.solvedReports %></h2>
+          <small>Solved Reports</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPORTS MANAGEMENT -->
+  <h5 class="fw-bold mb-3">📋 Reports Management</h5>
+  <div class="card shadow-sm mb-5">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>#</th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Danger</th>
+              <th>Status</th>
+              <th>Reported By</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (reports.length === 0) { %>
+              <tr>
+                <td colspan="8" class="text-center text-muted py-4">No reports yet.</td>
+              </tr>
+            <% } else { %>
+              <% reports.forEach(report => { %>
+                <tr>
+                  <td><%= report.id %></td>
+                  <td>
+                    <strong><%= report.title %></strong>
+                    <% if (report.address) { %>
+                      <br><small class="text-muted">📍 <%= report.address %></small>
+                    <% } %>
+                  </td>
+                  <td><span class="badge bg-secondary"><%= report.category %></span></td>
+                  <td>
+                    <% if (report.danger_level === 'high') { %>
+                      <span class="badge bg-danger">🔴 High</span>
+                    <% } else if (report.danger_level === 'medium') { %>
+                      <span class="badge" style="background-color: #fd7e14; color:white;">🟠 Medium</span>
+                    <% } else { %>
+                      <span class="badge bg-success">🟢 Low</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <% if (report.status === 'solved') { %>
+                      <span class="badge bg-success">✅ Solved</span>
+                    <% } else { %>
+                      <span class="badge bg-warning text-dark">⚠️ Open</span>
+                    <% } %>
+                  </td>
+                  <td><small><%= report.email %></small></td>
+                  <td><small><%= new Date(report.created_at).toLocaleDateString() %></small></td>
+                  <td>
+                    <div class="d-flex gap-1">
+                      <% if (report.status !== 'solved') { %>
+                        <form action="/report/solve/<%= report.id %>" method="POST">
+                          <button class="btn btn-success btn-sm">✅</button>
+                        </form>
+                      <% } %>
+                      <form action="/report/delete/<%= report.id %>" method="POST">
+                        <button class="btn btn-danger btn-sm"
+                          onclick="return confirm('Delete this report?')">🗑️</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- USERS MANAGEMENT -->
+  <h5 class="fw-bold mb-3">👥 Users Management</h5>
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>#</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Reports</th>
+              <th>Joined</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% users.forEach(u => { %>
+              <tr>
+                <td><%= u.id %></td>
+                <td><%= u.email %></td>
+                <td>
+                  <% if (u.role === 'admin') { %>
+                    <span class="badge bg-warning text-dark">Admin</span>
+                  <% } else { %>
+                    <span class="badge bg-secondary">User</span>
+                  <% } %>
+                </td>
+                <td><span class="badge bg-primary"><%= u.report_count %></span></td>
+                <td><small><%= new Date(u.created_at).toLocaleDateString() %></small></td>
+                <td>
+                  <!-- Prevent admin from deleting themselves -->
+                  <% if (u.id !== user.id) { %>
+                    <form action="/admin/delete-user/<%= u.id %>" method="POST">
+                      <button class="btn btn-danger btn-sm"
+                        onclick="return confirm('Delete this user and all their reports?')">
+                        🗑️ Delete
+                      </button>
+                    </form>
+                  <% } else { %>
+                    <span class="text-muted small">That's you</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<%- include('partials/footer') %>
